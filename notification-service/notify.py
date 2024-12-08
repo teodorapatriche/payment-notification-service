@@ -17,8 +17,8 @@ TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
 # Initialize Twilio client
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-@app.route('/send-sms', methods=['POST'])
-def send_sms():
+@app.route('/notify', methods=['POST'])
+def notify():
     try:
         # Get recipient phone number and message from the request
         data = request.json
