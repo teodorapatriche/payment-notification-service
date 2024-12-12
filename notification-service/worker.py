@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-from flask import jsonify
 from twilio.rest import Client
 import os
 
@@ -17,25 +16,13 @@ if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN:
 # Initialize Twilio client
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-# def send_sms(to, message):
-#     # Simulate sending SMS (replace with actual integration logic)
-#     print(f"Sending SMS to {to}: {message}")
-#     time.sleep(2)  # Simulate delay
-#     return f"Notification sent to {to}"
-
 def send_sms(to_phone, message_body):
     try:
-        # Get recipient phone number and message from the request
-        # data = request.json
-        # to_phone = data.get("to")
-        # message_body = data.get("message")
-        
-        # Check for required fields
         if not to_phone or not message_body:
-            return jsonify({"error": "Missing 'to' or 'message' field"}), 400
+            raise ValueError("Missing 'to' or 'message' field")
         
         # Send the SMS using Twilio
-        client.messages.create(
+        message = client.messages.create(
             to=to_phone,
             from_=TWILIO_PHONE_NUMBER,
             body=message_body
@@ -43,7 +30,10 @@ def send_sms(to_phone, message_body):
         
         # Return the Twilio message SID as confirmation
         print(f"SMS sent to {to_phone}")
+        return {
+            "status": "success",
+            "message_sid": message.sid
+        }
     except Exception as e:
         print(f"Failed to send SMS: {str(e)}")
-
- 
+        raise  # Re-raise the exception to mark the job as failed
