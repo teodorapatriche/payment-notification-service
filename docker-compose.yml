@@ -1,4 +1,13 @@
 services:
+  postgres:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-data:/var/lib/postgresql/data
+    env_file:
+      - ./db/.env
   redis:
     image: "redis:alpine"
     container_name: redis
@@ -27,3 +36,6 @@ services:
     command: rq worker --with-scheduler
     env_file:
       - ./notification-service/.env
+
+volumes:
+  db-data:
